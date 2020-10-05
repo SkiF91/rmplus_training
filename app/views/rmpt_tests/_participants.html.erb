@@ -1,0 +1,239 @@
+<%= render partial: 'group_sets/head' %>
+
+<%= form_for(@test.group_set, as: 'group_set', remote: true, html: { class: 'ldap-gs-form' }) do |f| %>
+  <div id="ldap-gs-errors"></div>
+
+  <div class="ldap-group-set-rules-container H">
+    <div class="ldap-gs-current-part L">
+      <table class="list odd-even ldap-gs-empty">
+        <tbody id="ldap-gs-groups"></tbody>
+        <tbody id="ldap-gs-users"></tbody>
+        <tbody id="ldap-gs-groupsets"></tbody>
+      </table>
+
+      <div class="nodata"><%= l(:label_no_data) %></div>
+    </div>
+
+    <div class="ldap-gs-fields-part L">
+      <%= render_tabs [
+                        { name: :groups, label: :label_group_sets_rules, partial: 'group_sets/groups' },
+                        { name: :users, label: :label_group_sets_users, partial: 'group_sets/users' },
+                        { name: :groupsets, label: :label_ldap_groupset_plural, partial: 'rmpt_tests/group_sets' }
+                      ] %>
+      <div class="H">
+        <div class="acl-btn-flat-delimiter R" style="margin-top: 10px">
+          <%= button_tag "<span>#{l(:label_rmpt_participants_add)}</span>".html_safe, type: 'button', class: 'ldap-gs-add acl-btn-flat acl-btn-flat-green rm-icon fa-plus no_line disabled' %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" charset="utf-8">
+    $('.ldap-gs-titles-dep-filter:not(.select2-hidden-accessible)').select2({ allowClear: true, placeholder: '<%= escape_javascript(l(:field_user_departments)) %>' });
+
+    RMPlus.LDAP.GS.$groupsets = $('#ldap-gs-groupsets');
+
+    RMPlus.LDAP.GS.rmpt_toggle_mask = function(show) {
+      $('#tab-content-participants .acl-fullscreen-loading-mask').remove();
+      if (show) {
+        $('#tab-content-participants').prepend("<div class='acl-fullscreen-loading-mask'><div class='form_loader big_loader'></div></div>");
+      }
+    };
+
+    RMPlus.LDAP.GS.build_groupsets_row = function(id, data) {
+      var html = '<tr id="ldap_gs-groupsets-' + id + '">';
+      html += '<td colspan="2">' + data.name + '</td>';
+      html += '<td class="acl-table-buttons">';
+      html += '<div><a href="#" class="ldap-gs-remove-full rm-icon no_line in_link fa-trash"><span>' + RMPlus.LDAP.GS.del_msg + '</span></a></div>';
+      html += '<div><a href="#" class="ldap-gs-preview rm-icon no_line in_link fa-eye"><span>' + RMPlus.LDAP.GS.preview_msg + '</span></a></div>';
+      html += '</td>';
+      html += '</tr>';
+
+      return html;
+    };
+
+    RMPlus.LDAP.GS.apply_container_sizes = function() {};
+    RMPlus.LDAP.GS.original_add_groups_data = RMPlus.LDAP.GS.add_groups_data;
+    RMPlus.LDAP.GS.add_groups_data = function (dep, titles, callback, after_callback) {
+      var original_after_callback = after_callback;
+
+      return RMPlus.LDAP.GS.original_add_groups_data(dep, titles, callback, function (params, complete_callback) {
+        RMPlus.LDAP.GS.rmpt_toggle_mask(true);
+
+        $.ajax({
+          method: 'POST',
+          url: RMPlus.Utils.relative_url_root + '/rmpt_tests/<%= @test.id %>/participants',
+          data: { gs_rules: [params] }
+        }).done(function(data) {
+          $('#ldap-gs-errors').html('');
+
+          if (data.errors) {
+            $('#ldap-gs-errors').html('<div id="errorExplanation"><ul><li>' + data.errors.join('</li><li>') + '</li></ul></div>');
+          } else {
+            complete_callback(true);
+            for (var key in data.groups) {
+              for (var tKey in data.groups[key].titles) {
+                RMPlus.LDAP.GS.data.groups[key].titles[tKey].id = data.groups[key].titles[tKey].id;
+              }
+            }
+
+            if (original_after_callback) {
+              original_after_callback.call(this, params);
+            } else {
+              complete_callback(true);
+            }
+          }
+        }).fail(function() {
+          complete_callback(false);
+        }).always(function() {
+          RMPlus.LDAP.GS.rmpt_toggle_mask();
+        });
+      });
+    };
+
+    RMPlus.LDAP.GS.original_add_flat_data = RMPlus.LDAP.GS.add_flat_data;
+    RMPlus.LDAP.GS.add_flat_data = function (type, rows, callback, after_callback) {
+      var original_after_callback = after_callback;
+      return RMPlus.LDAP.GS.original_add_flat_data(type, rows, callback, function(ids, complete_callback) {
+        RMPlus.LDAP.GS.rmpt_toggle_mask(true);
+
+        var params = [];
+        var field = type.replace(/s$/, '') + '_id';
+        var tmp;
+        for (var sch = 0; sch < ids.length; sch ++) {
+          tmp = {};
+          tmp[field] = ids[sch];
+          params.push(tmp);
+        }
+        var data = {};
+        if (type === 'groupsets') {
+          data.groupsets = params;
+        } else {
+          data.gs_rules = params;
+        }
+        $(document.body).data('ajax_emmiter', $('.ldap-gs-add'));
+        $.ajax({
+          method: 'POST',
+          url: RMPlus.Utils.relative_url_root + '/rmpt_tests/<%= @test.id %>/participants',
+          data: data
+        }).done(function(data) {
+          $('#ldap-gs-errors').html('');
+
+          if (data.errors) {
+            $('#ldap-gs-errors').html('<div id="errorExplanation"><ul><li>' + data.errors.join('</li><li>') + '</li></ul></div>');
+          } else {
+            complete_callback(true);
+            for (var key in data[type]) {
+              RMPlus.LDAP.GS.data[type][key].id = data[type][key].id;
+            }
+
+            if (original_after_callback) {
+              original_after_callback.call(this, ids, complete_callback);
+            } else {
+              complete_callback(true);
+            }
+          }
+        }).fail(function() {
+          complete_callback(false);
+        }).always(function() {
+          RMPlus.LDAP.GS.rmpt_toggle_mask();
+        });
+      });
+    };
+
+    RMPlus.LDAP.GS.original_remove_data = RMPlus.LDAP.GS.remove_data;
+    RMPlus.LDAP.GS.remove_data = function (type, id, callback, after_callback) {
+      var original_after_callback = after_callback;
+      return RMPlus.LDAP.GS.original_remove_data(type, id, callback, function(deleted, complete_callback) {
+        RMPlus.LDAP.GS.rmpt_toggle_mask(true);
+
+        var data = {};
+        var ids = [];
+        if (deleted.id) {
+          ids.push(deleted.id);
+        } else {
+          for (var key in deleted.titles) {
+            ids.push(deleted.titles[key].id);
+          }
+        }
+
+        if (type === 'groupsets') {
+          data.groupsets = ids;
+        } else {
+          data.gs_rules = ids;
+        }
+        $.ajax({
+          method: 'DELETE',
+          url: RMPlus.Utils.relative_url_root + '/rmpt_tests/<%= @test.id %>/participants',
+          data: data
+        }).done(function(data) {
+          $('#ldap-gs-errors').html('');
+
+          if (data.errors) {
+            $('#ldap-gs-errors').html('<div id="errorExplanation"><ul><li>' + data.errors.join('</li><li>') + '</li></ul></div>');
+          } else {
+            if (original_after_callback) {
+              return original_after_callback.call(this, deleted, complete_callback);
+            } else {
+              complete_callback(true);
+            }
+          }
+        }).fail(function() {
+          complete_callback(false);
+        }).always(function() {
+          RMPlus.LDAP.GS.rmpt_toggle_mask();
+        });
+      });
+    };
+
+    RMPlus.LDAP.GS.original_remove_title_data = RMPlus.LDAP.GS.remove_title_data;
+    RMPlus.LDAP.GS.remove_title_data = function (dep_id, title_id, callback, after_callback) {
+      var original_after_callback = after_callback;
+      return RMPlus.LDAP.GS.original_remove_title_data(dep_id, title_id, callback, function(deleted, complete_callback) {
+        RMPlus.LDAP.GS.rmpt_toggle_mask(true);
+
+        $.ajax({
+          method: 'DELETE',
+          url: RMPlus.Utils.relative_url_root + '/rmpt_tests/<%= @test.id %>/participants',
+          data: { gs_rules: [deleted.id] }
+        }).done(function(data) {
+          $('#ldap-gs-errors').html('');
+
+          if (data.errors) {
+            $('#ldap-gs-errors').html('<div id="errorExplanation"><ul><li>' + data.errors.join('</li><li>') + '</li></ul></div>');
+          } else {
+            if (original_after_callback) {
+              return original_after_callback.call(this, deleted, complete_callback);
+            } else {
+              complete_callback(true);
+            }
+          }
+        }).fail(function() {
+          complete_callback(false);
+        }).always(function() {
+          RMPlus.LDAP.GS.rmpt_toggle_mask();
+        });
+      });
+    };
+
+
+    RMPlus.LDAP.GS.init_gs(<%= grouped_rules(@test.group_set.sorted_rules).merge({ groupsets: @test.participants.inject({}) { |h, p| h[p.group_set_id] = { id: p.id, name: p.group_set.name }; h } })
+                                                                 .to_json.html_safe %>, {
+          last_id: <%= @test.group_set.new_record? ? 'null' : @test.group_set.id %>,
+          del_msg: '<%= escape_javascript(l(:button_delete)) %>',
+          preview_msg: '<%= escape_javascript(l(:label_preview)) %>',
+          any_dep_msg: '<%= escape_javascript(l(:ldap_label_any_department)) %>',
+          any_title_msg: '<%= escape_javascript(l(:label_ldap_any_title)) %>',
+          something_changed_msg: '<%= escape_javascript(l(:label_ldap_gs_something_changed)) %>',
+          no_data_msg: '<%= escape_javascript(l(:label_no_data)) %>',
+          del_confirm_msg: '<%= escape_javascript(l(:text_are_you_sure)) %>'
+        },
+        $('#ldap-gs-groups'),
+        $('#ldap-gs-users')
+    );
+  </script>
+
+<script type="text/javascript" charset="utf-8">
+  $('.tabs-buttons').remove();
+</script>
+<% end %>

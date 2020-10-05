@@ -1,0 +1,53 @@
+<div class="contextual">
+  <%= link_to "<span>#{l(:label_rmpt_add_test)}</span>".html_safe, new_rmpt_test_path, class: 'rmpt-new-test no_line rm-icon fa-plus acl-btn-flat acl-btn-flat-green' %>
+</div>
+<h2>
+  <%= l(:label_rmpt_tests_header) %>
+  <% html_title l(:label_rmpt_tests_header) %>
+</h2>
+
+<div class="acl-split-container">
+  <div class="acl-split-left fixed">
+    <div class="acl-tree-list-header">
+      <%= l(:label_rmpt_categories_tree_header) %>
+    </div>
+    <div class="acl-tree-list acl-remote-reloadable">
+      <% query_params = request.query_parameters %>
+
+      <% if @categories_tree.present? || @tests.present? %>
+        <ul>
+          <li>
+            <%= link_to "<span>#{l(:label_rmpt_all_categories)}</span>".html_safe, { params: query_params.merge(category_id: nil) }, class: 'in_link no_line' + (@cat.blank? && !@cat_blank ? ' selected' : '') %>
+          </li>
+          <li>
+            <%= link_to "<span>#{l(:label_rmpt_category_empty)}</span>".html_safe, { params: query_params.merge(category_id: -1) }, class: 'in_link no_line' + (@cat_blank ? ' selected' : '') %>
+          </li>
+        </ul>
+      <% end %>
+
+      <% if @categories_tree.present? %>
+        <%= acl_tree(@categories_tree) do |node, li_class| %>
+          <% if !node.leaf? && (@cat.blank? || @cat.node.lft < node.lft || @cat.node.rgt > node.rgt) %>
+            <% li_class << ' closed' %>
+          <% end %>
+
+          <%= link_to "<span>#{node.name}</span>".html_safe, { params: query_params.merge({ category_id: node.id }) }, class: 'in_link no_line' + (@cat.present? && @cat.id == node.id ? ' selected' : ''), data: { id: node.id } %>
+        <% end %>
+      <% else %>
+        <div class="nodata acl-indent-v">
+          <%= l(:text_rmpt_category_tree_empty) %>
+        </div>
+        <% if User.current.global_permission_to?(:rmpt_manage_categories) %>
+          <div class="acl-indent-v">
+            <%= link_to "<span>#{l(:label_rmpt_create_categories_tree)}</span>".html_safe, rmpt_categories_path, class: 'no_line rm-icon fa-plus acl-btn-flat' %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <div class="acl-split-right">
+    <%= render partial: 'tests_list' %>
+  </div>
+</div>
+
+<%= render partial: 'sidebar' %>

@@ -1,0 +1,41 @@
+<h2>
+  <%= l(:label_rmpt_report_by_tests_header) %>
+  <% html_title l(:label_rmpt_report_by_tests_header) %>
+</h2>
+
+<%= form_tag(rmpt_report_path, class: 'rmpt-rep-reload') do |f| %>
+  <%= hidden_field_tag 'per_page', @limit %>
+  <%= hidden_field_tag 'page', @paginator.page  %>
+  <%= hidden_field_tag 'export', nil %>
+
+  <p>
+    <%= select_tag 'user_ids[]', options_for_select(RmptTest.enrolled_users(User.current).sorted.map { |u| [u.name, u.id] }, @user_ids), multiple: true, class: 'select2', placeholder: l(:label_rmpt_all_users) %>
+  </p>
+  <% deps = []
+     UserDepartmentTree.each_with_level(UserDepartment.joins(:node).order("#{UserDepartmentTree.table_name}.lft")) do |d, lvl|
+       deps << ["#{'&nbsp;' * lvl} #{d.name}".html_safe, d.id]
+     end
+  %>
+  <p>
+    <%= select_tag 'department_ids[]', options_for_select(deps, @dep_ids), multiple: true, class: 'select2', placeholder: l(:label_rmpt_all_departments) %>
+  </p>
+  <p>
+    <%= select_tag 'test_ids[]', options_for_select(RmptTest.manageable(User.current).map { |t| [t.name, t.id] }, @test_ids), multiple: true, class: 'select2', placeholder: l(:label_rmpt_all_tests) %>
+  </p>
+  <p>
+    <%= select_tag 'status_ids[]', options_for_select(RmptUserTest::REPORT_STATUSES.map { |s| [l("label_rmpt_test_status_#{s}"), s] }, @status_ids), multiple: true, class: 'select2', placeholder: l(:label_rmpt_all_statuses) %>
+  </p>
+  <p>
+    <%= select_tag 'group_by', options_for_select([[l(:label_rmpt_report_group_by_user), 'user'], [l(:label_rmpt_report_group_by_test), 'test']], @group_by) %>
+  </p>
+  <p>
+    <%= button_tag "<span>#{l(:button_apply)}</span>".html_safe, class: 'acl-btn-flat acl-btn-flat-green rm-icon fa-table' %>
+    <%= button_tag "<span>#{l(:label_rmpt_export_to_excel)}</span>".html_safe, class: 'acl-btn-flat rm-icon fa-file-excel-o rmpt-rep-to-excel' %>
+  </p>
+<% end %>
+
+<div id="rmpt-report-data" class="acl-report-fields-delimiter autoscroll">
+  <%= render partial: "#{@group_by}s_list" %>
+</div>
+
+<% render partial: 'rmpt_tests/sidebar' %>

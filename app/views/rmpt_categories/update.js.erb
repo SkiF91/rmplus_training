@@ -1,0 +1,5 @@
+<% if @category.errors.blank? %>
+  RMPlus.TR.update_category_line(<%= @category.id %>, '<%= escape_javascript(@category.name) %>', <%= @category.parent_id || 'null' %>, <%= @category.left_sibling.try(:id) || 'null' %>, <%= @category.right_sibling.try(:id) || 'null' %>);
+<% else %>
+  RMPlus.TR.show_category_errors('<%= escape_javascript(error_messages_for(@category)) %>');
+<% end %>

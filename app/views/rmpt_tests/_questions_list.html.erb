@@ -1,0 +1,101 @@
+<%
+  questions ||= @test.questions.sorted
+%>
+
+<div id="rmpt-q-import-modal" class="modal fade I" aria-hidden="true" data-width="600px" style="z-index: 1060;">
+  <%= form_tag(import_rmpt_test_path(@test, tab: params[:tab]), multipart: true, class: 'acl-fake-ajax') do %>
+    <div class="modal-header">
+      <h3><%= l(:label_rmpt_questions_import_header) %></h3>
+    </div>
+    <div class="modal-body">
+      <%= hidden_field_tag 'authenticity_token', form_authenticity_token %>
+      <p>
+        <%= file_field_tag 'file', data: { accept: 'CSV|XLSX', max_file_size: 5.megabytes, max_file_size_message: l(:error_attachment_too_big, max_size: number_to_human_size(5.megabytes)), wrong_file_extension_message: l(:error_rmpt_import_sheet_wrong_file) }, class: 'acl-file-upload' %>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <%= button_tag "<span>#{l(:label_rmpt_import_button)}</span>".html_safe, class: 'acl-btn-flat acl-btn-flat-green rm-icon fa-upload' %>
+      <%= button_tag "<span>#{l(:button_close_window)}</span>".html_safe, type: 'button', class: 'acl-btn-flat rm-icon fa-sign-out', 'data-dismiss' => 'modal', 'aria-hidden' => 'true' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="H">
+  <%= link_to "<span>#{l(:label_rmpt_questions_import)}</span>".html_safe, '#', class: 'in_link no_line rm-icon fa-file-excel-o acl-btn-flat acl_ajax_edit', data: { width: '400px', target: 'rmpt-q-import-modal', static: true } %>
+  <div class="acl-btn-flat-delimiter R">
+    <%= link_to "<span>#{l(:label_rmpt_question_add)}</span>".html_safe, '#', class: 'in_link no_line rm-icon fa-plus acl-btn-flat rmpt-q-add' %>
+  </div>
+</div>
+<div id="rmpt-questions-list" class="autoscroll">
+  <table class="rmpt-q-table <%= ' I' if questions.blank? %>">
+    <thead>
+      <tr>
+        <th></th>
+        <th><%= l(:field_rmpt_question_text) %></th>
+        <th><%= l(:label_rmpt_answers_plural) %></th>
+        <th><%= l(:field_rmpt_question_randomize) %></th>
+        <th style="width: 5%"><%= l(:field_rmpt_statistic) %></th>
+        <th style="width: 5%"><%= l(:field_rmpt_average_time) %></th>
+        <th class="acl-table-buttons"></th>
+      </tr>
+    </thead>
+    <tbody id="rmpt-questions-container">
+      <% if questions.present? %>
+        <% questions.each do |q| %>
+          <tr id="rmpt-q-<%= q.id %>" class="rmpt-q-<%= q.id %>">
+            <td class="rmpt-q-drag"><span>≡</span></td>
+            <td>
+              <span><%= q.text_inline %></span>
+            </td>
+            <td>
+              <span><%= q.correct_answers_inline.join(', ') %></span>
+            </td>
+            <td>
+              <span class="rm-icon <%= q.randomize? ? 'fa-check-square-o' : 'fa-square-o' %>"></span>
+            </td>
+            <td class="rmpt-stat">
+              <span>
+              <% if q.count_touch.nil?%>
+                &times;
+              <% else %>
+                  <%= rmp_number_text(((q.correct_count || 0) / q.count_touch.to_f) * 100) %>%
+                  (<%= q.correct_count || 0 %>/<%= q.count_touch %>)
+                  <%= link_to '<span></span>'.html_safe, clear_statistic_rmpt_question_path(q), method: :post, class: 'rm-icon no_line fa-recycle rmpt-clear-btn', data: { confirm: l(:text_rmpt_are_you_sure_stat) }, title: l(:text_rmpt_clear_stat), remote: true %>
+              <% end %>
+              </span>
+            </td>
+            <td class="rmpt-stat">
+              <span>
+              <% if q.time_touch.present? && q.count_touch.present? %>
+                  <%= Time.at(q.time_touch / q.count_touch.to_f).utc.strftime("%H:%M:%S") %>
+              <% else %>
+                  &times;
+              <% end %>
+              </span>
+            </td>
+            <td class="acl-table-buttons">
+              <%= link_to "<span>#{l(:button_edit)}</span>".html_safe, edit_rmpt_question_path(q), class: 'in_link no_line rm-icon fa-pencil show_loader', remote: true %>
+              <%= link_to "<span>#{l(:button_delete)}</span>".html_safe, rmpt_question_path(q), class: 'in_link no_line rm-icon fa-trash show_loader', remote: true, method: :delete, data: { confirm: l(:text_are_you_sure) } %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="nodata <%= ' I' if questions.present? %>"><%= l(:label_rmpt_no_questions) %></div>
+</div>
+
+<div class="H">
+  <div class="acl-btn-flat-delimiter R<%= ' I' if questions.size < 5 %>" style="margin-top: 5px">
+    <%= link_to "<span>#{l(:label_rmpt_question_add)}</span>".html_safe, '#', class: 'in_link no_line rm-icon fa-plus acl-btn-flat rmpt-q-add' %>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+  RMPlus.TR.questions_total_count = <%= questions.size %>;
+  RMPlus.TR.question_form = '<%= escape_javascript(render(partial: 'rmpt_questions/form', locals: { question: RmptQuestion.new(test_id: @test.id) })) %>';
+
+  RMPlus.TR.override_attachments_upload_blob();
+  RMPlus.TR.make_questions_sortable($('#rmpt-questions-container'));
+</script>

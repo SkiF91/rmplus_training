@@ -1,0 +1,22 @@
+<h2>
+  <%= l(:label_rmpt_test) %> &rarr; <%= @user_test.test.name %>
+  <% html_title l(:label_rmpt_test), @user_test.test.name %>
+</h2>
+
+<div class="rmpt-ut-text-page">
+  <%= textilizable(@text) %>
+</div>
+
+<% if @user_test.show_t_result %>
+  <h2><%= l(:text_rmpt_your_answers_header) %></h2>
+  <div id="rmpt_res_body">
+    <%= render partial: 'rmpt/testing_view', locals: { mode: 'result', user_test: @user_test, question: @user_test.questions.first, q_num: 1 } %>
+  </div>
+<% elsif @user_test.test.startable?(@user_test.user) %>
+  <div>
+    <%= link_to "<span>#{l(:label_rmpt_user_test_action_repeat)}</span>".html_safe, prepare_rmpt_path(@user_test.test), class: "acl-btn-flat acl-btn-flat-green rm-icon fa-repeat" %>
+  </div>
+<% end %>
+
+
+<%= render partial: 'rmpt_tests/sidebar' %>

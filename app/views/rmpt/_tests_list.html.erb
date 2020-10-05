@@ -1,0 +1,107 @@
+<%
+  tab ||= {}
+  test_data ||= tab[:test_data] || {}
+  categories ||= test_data[:categories]
+  tests = test_data[:tests] || []
+  attempts = test_data[:attempts] || {}
+%>
+
+<% if tests.present? %>
+  <div class="autoscroll">
+    <table class="list rmpt-ut-table odd-even">
+      <tr>
+        <th><%= l(:field_rmpt_test_name) %></th>
+        <th><%= l(:label_rmpt_attempts) %></th>
+        <th><%= l(:label_rmpt_test_status) %></th>
+        <th><%= l(:field_rmpt_user_test_start_at) %></th>
+        <th><%= l(:label_rmpt_user_test_time_used) %></th>
+        <th><%= l(:field_rmpt_user_test_result_ratio) %></th>
+        <th><%= l(:label_rmpt_test_due) %></th>
+        <th></th>
+      </tr>
+
+      <%
+        chain = []
+        expanded = {}
+        draw_points = {}
+      %>
+
+      <% ([nil] + categories).each do |c| %>
+        <%
+          closed_css = (@q == 'overdue' || @q == 'failed') && expanded.present? ? 'closed' : ''
+          collapsed_css = (@q == 'overdue' || @q == 'failed') && expanded.present? ? 'collapsed' : ''
+
+          has_tests = (c.present? && c.attributes['has_tests'].to_i == 1) || (c.blank? && tests.first.category_id.blank?)
+          p_has_tests = c.present? && c.attributes['p_has_tests'].to_i == 1
+          need_expand = has_tests || (c.present? && c.attributes['occurs'].to_i > 1 && p_has_tests)
+
+          while chain.size > 0 && !c.is_descendant_of?(chain.last); chain.pop; end
+        %>
+
+
+        <% if need_expand %>
+
+          <%
+            parent_classes = ''
+            names_path = ''
+            level = 0
+            ctp_classes = ''
+          %>
+          <% if c.present? %>
+            <%
+              chain.each do |cc|
+                unless expanded[cc.id]
+                  names_path << "#{cc.name} &rarr; "
+                  ctp_classes << " ctp-#{cc.parent_id}" if cc.parent_id.present?
+                  expanded[cc.id] = true
+                end
+
+                parent_classes << " p-#{cc.id}"
+                level += draw_points[cc.id] ? 1 : 0
+              end
+            %>
+            <tr class="rmpt-ut-cat rmpt-ident-<%= level %> <%= parent_classes %> <%= ctp_classes %> ctp-<%= c.parent_id %> <%= collapsed_css %> <%= closed_css %>" data-id="<%= c.id %>">
+              <td colspan="8">
+                <span class="rmpt-ut-cat-expander">
+                  <%= names_path.html_safe %>
+                  <%= c.name %>
+                </span>
+
+                <%
+                  expanded[c.id] = true
+                  draw_points[c.id] = true
+                %>
+              </td>
+            </tr>
+          <% else %>
+            <tr class="rmpt-ut-cat rmpt-ident-<%= 0 %>" data-id="0">
+              <td colspan="8">
+                <span class="rmpt-ut-cat-expander">
+                  <%= l(:label_rmpt_category_empty) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if has_tests %>
+            <% tests.each_with_index do |t, ind| %>
+              <%
+                if t.category_id.to_i != c.try(:id).to_i
+                  tests = tests[ind..-1]
+                  break
+                end
+              %>
+
+              <%= rmpt_render_test_line(t, attempts[t.id], { render_buttons: true, render_categories: false, css: "rmpt-ut-test rmpt-ident-#{level + 1} #{parent_classes} p-#{c.try(:id).to_i} ctp-#{c.try(:id).to_i} #{closed_css}", child_css: "rmpt-ut-child rmpt-ident-#{level + 1} #{parent_classes} p-#{c.try(:id).to_i} ctp-#{c.try(:id).to_i} #{closed_css}" }) %>
+
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% chain << c if c.present? && !c.leaf? %>
+      <% end %>
+    </table>
+  </div>
+<% else %>
+  <div class="nodata"><%= l(:label_no_data) %></div>
+<% end %>

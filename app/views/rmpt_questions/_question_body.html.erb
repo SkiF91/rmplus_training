@@ -1,0 +1,55 @@
+<%
+  mode = defined?(mode) ? mode : 'test'
+  preview_mode = mode == 'preview'
+  test_mode = mode == 'test'
+  result_mode = mode == 'result'
+  q_num ||= 0
+  question ||= nil
+%>
+
+<div class="rmpt-question-header">
+    <h3 class="rmpt-question-header-body">
+      <span class="rmpt-question-header-txt"><%= l(:label_rmpt_question) %></span>
+      <span class="rmpt-question-header-num"><%= question.try(:num) %></span>.
+    </h3>
+</div>
+<div class="rmpt-question-body rmpt-q-mode-<%= mode %>">
+  <%= hidden_field_tag 'q_num', q_num, id: 'rmpt-utp-q-num' %>
+  <div class="rmpt-q-text">
+    <%= textilizable question, :text, attachments: question.saved_attachments if question.present? %>
+  </div>
+  <%
+    answers = nil
+    if question.present?
+      if preview_mode
+        answers = question.dirty_answers
+      else
+        answers = question.answers
+      end
+    end
+  %>
+
+  <div class="rmpt-q-answer-options">
+    <div class="rmpt-block-header" data-header="<%= question.try(:qtype_header_text) %>"></div>
+    <ul>
+      <% (answers || []).each do |answer| %>
+        <li>
+          <div class="rmpt-q-answer-field">
+            <% selected = result_mode && answer.selected? %>
+            <% if preview_mode %>
+              <span class="rmpt-q-answer-result <%= ' rm-icon rm-nom ' + (selected ? 'fa-check-circle-o' : 'fa-check') if answer.correct? %>"></span>
+            <% end %>
+            <% if question.type_single? %>
+              <%= radio_button_tag "rmpt[answer]", answer.num, selected, id: nil, class: 'rmpt-q-answer-input' %>
+            <% else %>
+              <%= check_box_tag "rmpt[answer][]", answer.num, selected, id: nil, class: 'rmpt-q-answer-input' %>
+            <% end %>
+          </div>
+          <div class="rmpt-q-answer-text">
+            <%= answer.text %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

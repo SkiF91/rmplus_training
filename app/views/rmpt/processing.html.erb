@@ -1,0 +1,14 @@
+<%= javascript_include_tag 'rmpt.test.js', plugin: :rmplus_training %>
+
+<h2>
+  <%= l(:label_rmpt_user_test_processing) %>: <%= @user_test.test.name %>
+</h2>
+
+<%= render partial: 'rmpt/testing_view', locals: { mode: 'test', user_test: @user_test, question: @question, q_num: @q_num } %>
+
+<script type="text/javascript" charset="utf-8">
+  RMPlus.TR.Test.current_test_id = <%= @user_test.test_id %>;
+  RMPlus.TR.Test.current_q_num = <%= @question.try(:num) || 0 %>;
+  RMPlus.TR.Test.timelimit_type = '<%= @user_test.timelimit_total.present? ? 'total' : (@user_test.timelimit_q.present? ? 'question' : '') %>';
+  RMPlus.TR.Test.apply_timer();
+</script>

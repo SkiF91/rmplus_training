@@ -1,0 +1,9 @@
+<% if action_name.to_s != 'edit' %>
+  <script type="text/javascript" charset="utf-8">
+    if ("replaceState" in window.history) {
+      window.history.replaceState(null, document.title, '<%= Redmine::Utils.relative_url_root %>/rmpt_tests/<%= @test.id %>/edit');
+    }
+  </script>
+<% end %>
+
+<%= render partial: 'form' %>

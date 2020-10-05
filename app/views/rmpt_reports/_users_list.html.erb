@@ -1,0 +1,65 @@
+<% if @count > 0 %>
+  <table class="list rmpt-ut-table odd-even">
+    <tr>
+      <th></th>
+      <th><%= l(:field_rmpt_test_category) %></th>
+      <th><%= l(:label_rmpt_attempts) %></th>
+      <th><%= l(:label_rmpt_test_status) %></th>
+      <th><%= l(:field_rmpt_user_test_start_at) %></th>
+      <th><%= l(:label_rmpt_user_test_time_used) %></th>
+      <th><%= l(:field_rmpt_user_test_result_ratio) %></th>
+      <th><%= l(:label_rmpt_test_due) %></th>
+    </tr>
+
+    <%
+      last_dep = nil
+      last_user = nil
+    %>
+    <% @report_data.each do |t| %>
+      <% if last_dep != t.attributes['dep_id'].to_i %>
+        <tr class="rmpt-rep-group">
+          <td colspan="8">
+              <span class="rmpt-rep-group-text">
+                <%= t.attributes['dep_name'] || l(:label_rmpt_department_empty) %>
+              </span>
+          </td>
+        </tr>
+        <%
+          last_dep = t.attributes['dep_id'].to_i
+          last_user = nil
+        %>
+      <% end %>
+
+      <% if last_user != t.attributes['user_id'] %>
+        <tr class="rmpt-rep-ident-0">
+          <td colspan="8">
+            <span class="rmpt-rep-group-text">
+              <%= link_to_user @users[t.attributes['user_id']] %>
+            </span>
+            <span class="rmpt-rep-hint">
+              <%= t.attributes['title_name'] %>
+            </span>
+          </td>
+        </tr>
+        <% last_user = t.attributes['user_id'] %>
+      <% end %>
+
+      <% css = t.has_attempts?(User.current) ? '' : 'rmpt-rep-attempts-expired' %>
+      <%= rmpt_render_test_line(t, @user_attempts["#{t.id}-#{t.attributes['user_id']}"], { render_categories: true, css: "#{css} rmpt-rep-ident-1", is_report: true }) %>
+    <% end %>
+  </table>
+<% else %>
+  <div class="nodata"><%= l(:label_no_data) %></div>
+<% end %>
+
+<span class="pagination">
+  <%= pagination_links_full @paginator, @count do |text, url| %>
+    <%
+      hash = {}
+      hash[:page] = url[:page] if url.present? && url[:page].present?
+      hash[:per_page] = url[:per_page] if url.present? && url[:per_page].present?
+    %>
+
+    <% link_to("<span>#{text}</span>".html_safe, '#', class: 'in_link no_line rmpt-rep-reload', data: hash) %>
+  <% end %>
+</span>

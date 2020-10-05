@@ -1,0 +1,13 @@
+<% if @q_num.present? %>
+  <%= render partial: 'rmpt_questions/question_body', locals: { user_test: @user_test, question: @question, q_num: @q_num, mode: 'result', is_report: @is_report } %>
+<% else %>
+  <div class="modal-header">
+    <h2><%= l(:label_rmpt_answers_plural) %></h2>
+  </div>
+  <div class="modal-body">
+    <%= render partial: 'rmpt/testing_view', locals: { mode: 'result', user_test: @user_test, question: @question, q_num: @q_num, is_report: @is_report } %>
+  </div>
+  <div class="modal-footer">
+    <button data-dismiss="modal" aria-hidden="true" style="vertical-align: middle;"><%= l(:button_close_window) %></button>
+  </div>
+<% end %>

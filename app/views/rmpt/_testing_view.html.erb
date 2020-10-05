@@ -1,0 +1,112 @@
+<%
+  mode ||= defined?(mode) ? mode : 'test'
+  result_mode = mode == 'result'
+  test_mode = mode == 'test'
+  is_report_page = defined?(is_report) ? true : false
+
+  q_count_completed = user_test.q_count_completed
+  has_selectable_q = false
+%>
+<div id="rmpt-utp-errors">
+  <%= error_messages_for user_test %>
+</div>
+<div id="rmpt-utp-question-container">
+  <div class="rmpt-utp-nav-container">
+    <% if user_test.timelimited? %>
+      <h3 id="rmpt-utp-timelimit">
+        <% if user_test.timelimit_q.present? %>
+          <span class="rmpt-utp-timelimit-txt"><%= l(:label_rmpt_timelimit_q_left) %>:</span>
+          <span class="rmpt-utp-timelimit-sec" data-sec="<%= question.try(:timelimit_left).to_i %>">&mdash;</span>
+        <% else %>
+          <span class="rmpt-utp-timelimit-txt"><%= l(:label_rmpt_timelimit_total_left) %>:</span>
+          <span class="rmpt-utp-timelimit-sec" data-sec="<%= user_test.timelimit_left %>">&mdash;</span>
+        <% end %>
+      </h3>
+    <% end %>
+
+    <% if result_mode %>
+      <h3>
+        <% res_ratio = user_test.status == RmptUserTest::STATUS_STARTED ? user_test.questions.where(correct: true).size.to_f / user_test.q_count_total.to_f * 100.0 : user_test.result_ratio %>
+        <%= l(:text_rmpt_show_q_result, percent: rmp_number_text(res_ratio), success: user_test.q_count_correct, total: user_test.q_count_total) %>
+      </h3>
+    <% else %>
+      <div id="rmpt-utp-progress">
+        <div class="rmpt-utp-progressbar">
+          <div class="rmpt-utp-progressbar-body">
+              <div class="rmpt-utp-progressbar-value" style="width: <%= user_test.q_count_total.to_i > 0 ? (q_count_completed.to_f / user_test.q_count_total.to_f * 100.0) : 0 %>%"></div>
+              <div class="rmpt-utp-progressbar-text">
+                <span class="rmpt-utp-count-completed"><%= q_count_completed %></span>
+                <span>/</span>
+                <span class="rmpt-utp-count-total"><%= user_test.q_count_total %></span>
+              </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div id="rmpt-utp-sheet">
+      <h3><%= l(:label_rmpt_questions_header) %></h3>
+      <ul>
+        <% user_test.questions.each do |q| %>
+          <%
+            q_count_completed += 1 if q.completed? || q.expired?
+            css = ''
+            css << ' rmpt-utp-current' if q.num == q_num || (q.num == 1 && q_num.nil?)
+            if q.selectable? || result_mode || q.num == @next_num
+              css << ' rmpt-utp-selectable'
+              if !q.completed? && q.num != q_num
+                has_selectable_q = true
+              end
+            end
+
+            if q.completed? || q.expired?  || result_mode
+              css << ' rmpt-utp-completed'
+            end
+
+            if user_test.show_q_result?  || result_mode
+              if q.correct?
+                css << ' rmpt-utp-result-correct'
+              elsif q.completed? || q.expired?
+                css << ' rmpt-utp-result-wrong'
+              end
+            end
+          %>
+          <li id="rmpt-utp-q-<%= q.num %>" class="acl-btn-flat<%= css %> <%= 'show-q-result' if result_mode %>" data-num="<%= q.num %>">
+            <span class="rmpt-utp-q-num-text">
+              <%= q.num %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+
+      <% if test_mode %>
+        <%= button_tag "<span>#{l(:label_rmpt_complete_test)}</span>".html_safe, type: 'button', class: 'rmpt-utp-action-complete acl-btn-flat rm-icon' %>
+      <% elsif result_mode && !is_report_page %>
+        <% if @user_test.test.startable?(@user_test.user) %>
+          <div>
+            <%= link_to "<span>#{l(:label_rmpt_user_test_action_repeat)}</span>".html_safe, prepare_rmpt_path(@user_test.test), class: "acl-btn-flat acl-btn-flat-green rm-icon fa-repeat" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="rmpt-utp-result-container">
+    <div id="rmpt-utp-question">
+      <%= render partial: 'rmpt_questions/question_body', locals: { mode: mode, question: question, q_num: q_num } %>
+
+      <% if test_mode %>
+        <div class="rmpt-question-footer">
+          <%= button_tag "<span>#{l(:label_rmpt_submit_answer)}</span>".html_safe, type: 'button', class: 'rmpt-utp-action-submit acl-btn-flat acl-btn-flat-green rm-icon' %>
+          <%= button_tag "<span>#{l(:label_rmpt_skip_question)}</span>".html_safe, type: 'button', class: "rmpt-utp-action-skip acl-btn-flat rm-icon#{ ' I' if @next_num.blank? && (@user_test.q_count_total - q_count_completed <= 1 || !has_selectable_q)}" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if result_mode %>
+  <script type="text/javascript" charset="utf-8">
+    RMPlus.TR.ajax_test_id = parseInt('<%= user_test.id %>');
+  </script>
+<% end %>

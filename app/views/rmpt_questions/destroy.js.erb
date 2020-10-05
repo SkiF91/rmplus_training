@@ -1,0 +1,1 @@
+RMPlus.TR.remove_question_line(<%= @question.id %>, <%= @question.destroyed? ? 'null' : @question.errors.full_messages.to_json.html_safe %>);

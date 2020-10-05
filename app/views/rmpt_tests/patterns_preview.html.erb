@@ -1,0 +1,11 @@
+<div class="modal-header">
+  <h3>
+    <%= l(:label_rmpt_preview_header) %>
+  </h3>
+</div>
+<div class="modal-body">
+  <%= textilizable(@text) %>
+</div>
+<div class="modal-footer">
+  <%= button_tag "<span>#{l(:button_close_window)}</span>".html_safe, type: 'button', class: 'acl-btn-flat rm-icon fa-sign-out', 'data-dismiss' => 'modal', 'aria-hidden' => 'true' %>
+</div>

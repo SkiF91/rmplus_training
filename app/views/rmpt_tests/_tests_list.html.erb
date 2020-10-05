@@ -1,0 +1,52 @@
+<% if @tests.present? %>
+  <div class="autoscroll">
+    <table class="list" style="width: 100%">
+      <tr>
+        <%
+          if @sort[:f] == 'name'
+            sort_name = @sort[:d] == 'desc' ? {} : { f: 'name', d: @sort[:d] == 'asc' ? 'desc': 'asc' }
+            class_name = "fa-sort-amount-#{@sort[:d]}"
+          else
+            sort_name = { f: 'name', d: 'asc' }
+            class_name = 'fa-sort'
+          end
+          if @sort[:f] == 'author'
+            sort_author = @sort[:d] == 'desc' ? {} : { f: 'author', d: @sort[:d] == 'asc' ? 'desc': 'asc' }
+            class_author = "fa-sort-amount-#{@sort[:d]}"
+          else
+            sort_author = { f: 'author', d: 'asc' }
+            class_author = 'fa-sort'
+          end
+        %>
+        <th><%= link_to "<span>#{l(:label_rmpt_test_name_header)}</span>".html_safe, rmpt_tests_path(category_id: params[:category_id], sort: sort_name), class: "in_link rmpt-t-resort no_line rm-icon #{class_name}" %></th>
+        <th><%= link_to "<span>#{l(:label_rmpt_test_author_header)}</span>".html_safe, rmpt_tests_path(category_id: params[:category_id], sort: sort_author), class: "in_link rmpt-t-resort no_line rm-icon #{class_author}" %></th>
+        <th width="1%"></th>
+      </tr>
+
+      <% last_cat = -1 %>
+      <% @tests.each do |t| %>
+        <% if last_cat != t.category_id %>
+          <% last_cat = t.category_id %>
+          <tr class="rmpt-table-group-header">
+            <td colspan="3">
+              <%= t.category.try(:name) || l(:label_rmpt_category_empty) %>
+            </td>
+          </tr>
+        <% end %>
+
+        <tr>
+          <td><%= link_to "<span>#{t.name}</span>".html_safe, edit_rmpt_test_path(t) %></td>
+          <td>
+            <%= link_to_user t.author %>
+          </td>
+          <td class="acl-table-buttons">
+            <%= link_to "<span>#{l(:button_edit)}</span>".html_safe, edit_rmpt_test_path(t), class: 'no_line rm-icon fa-pencil' %>
+            <%= link_to "<span>#{l(:button_delete)}</span>".html_safe, rmpt_test_path(t, category_id: params[:category_id], sort: @sort.blank? ? nil : @sort), class: 'no_line in_link rm-icon fa-trash rmpt-t-remove', data: { confirm: l(:text_are_you_sure), type: :delete } %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+<% else %>
+  <div class="nodata acl-indent-v"><%= l(:label_no_data) %></div>
+<% end %>

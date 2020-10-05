@@ -1,0 +1,27 @@
+<%= form_tag({ controller: :rmpt_tests, action: :extra_attempt, id: @test.id }, id: 'rmpt-add-extra-attempt', data: { test_id: @test.id }) do |f| %>
+  <div class="modal-header">
+    <%= l(:label_rmpt_extra_attempt_new) %>
+  </div>
+  <div class="modal-body">
+    <% if @user.present? %>
+      <%= hidden_field_tag 'user_id', @user.id, id: nil %>
+    <% else %>
+      <p>
+        <%= select_tag 'user_id', options_for_select(RmptTest.enrolled_users(User.current).where('et.id = ?', @test.id).sorted.limit(20).map { |u| [u.name, u.id] }), class: 'rmpt-select2-ajaxable', data: { ajax_url: url_for(controller: :rmpt_tests, action: :ajax_users_list, test_id: @test.id) } %>
+      </p>
+    <% end %>
+    <% unless @ex_attempt.new_record? %>
+      <%= @ex_attempt.attempts %>
+      +
+    <% end %>
+    <%= number_field_tag 'attempts', 1, min: 1, max: 100 %>
+  </div>
+  <div class="modal-footer">
+    <%= button_tag "<span>#{l(:button_save)}</span>".html_safe, class: 'acl-btn-flat acl-btn-flat-green rm-icon fa-save' %>
+    <%= button_tag "<span>#{l(:button_close_window)}</span>".html_safe, type: 'button', class: 'acl-btn-flat rm-icon fa-sign-out', 'data-dismiss' => 'modal', 'aria-hidden' => 'true' %>
+  </div>
+<% end %>
+
+<script type="text/javascript" charset="utf-8">
+  RMPlus.TR.make_select2_ajaxable();
+</script>

@@ -1,0 +1,20 @@
+<h2>
+  <%= l(:label_rmpt_user_tests_my) %> / <%= l("label_rmpt_user_tests_#{@q}") %>
+  <% html_title l(:label_rmpt_user_tests_my), l("label_rmpt_user_tests_#{@q}") %>
+</h2>
+
+<style>
+  <% (0..@max_depth).each do |lvl| %>
+    .rmpt-ident-<%= lvl %> td:first-child {
+      padding-left: <%= 2 + (20 * lvl) %>px;
+    }
+  <% end %>
+</style>
+
+<% if @q == 'on_me' %>
+  <%= render partial: 'rmpt/on_me' %>
+<% else %>
+  <%= render partial: 'rmpt/tests_list', locals: { test_data: @test_data } %>
+<% end %>
+
+<% render partial: 'rmpt_tests/sidebar' %>

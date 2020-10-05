@@ -1,0 +1,14 @@
+<% if controller_name.to_s.start_with?('rmpt') %>
+  <%= stylesheet_link_tag 'rmpt.css', plugin: :rmplus_training %>
+
+  <% if %w(rmpt_tests rmpt_questions rmpt_categories rmpt_reports rmpt).include?(controller_name.to_s) %>
+    <%= javascript_include_tag 'rmpt.js', plugin: :rmplus_training %>
+  <% end %>
+
+  <% if controller_name == 'rmpt' %>
+    <%= javascript_include_tag 'rmpt.user.js', plugin: :rmplus_training %>
+  <% end %>
+  <% if controller_name == 'rmpt_reports' %>
+    <%= javascript_include_tag 'rmpt.report.js', plugin: :rmplus_training %>
+  <% end %>
+<% end %>

@@ -1,0 +1,86 @@
+<%= form_for @test do |f| %>
+  <%= f.fields_for :page_pattern do |ff| %>
+    <table class="plugin_settings">
+      <tr>
+        <td>
+          <label for="rmpt_test_page_pattern_attributes_start_text"><%= l(:field_rmpt_tests_page_pattern_start_text) %></label>
+        </td>
+        <td class="rmp-wide-input">
+          <%= ff.text_area :start_text, rows: 5, class: 'wiki-edit' %>
+          <%= wikitoolbar_for 'rmpt_test_page_pattern_attributes_start_text' %>
+          <div class="H">
+            <%= link_to "<span>#{l(:label_preview)}</span>".html_safe, patterns_preview_rmpt_test_path(@test), class: 'in_link rm-icon no_line fa-eye rmpt-patterns-preview' %>
+          </div>
+          <%
+            cached_macros = "<legend class='rm-icon'>#{l(:label_rmpt_macros_list)}</legend><div class='autoscroll'><table>"
+            Rmpt::Utils::Macros::RmptUserMacros.instance.as_select.each do |(group, macros)|
+              macros.each do |mc|
+                cached_macros << "<tr class='acl-macros-item'><td>#{mc[0].html_safe}</td><td class='acl-macros-text'>#{mc[1]}</td></tr>"
+              end
+            end
+            cached_macros << '</table></div>'
+            cached_macros = cached_macros.html_safe
+          %>
+          <fieldset class="acl-macros-list closed" data-field="#rmpt_test_page_pattern_attributes_start_text">
+            <%= cached_macros %>
+          </fieldset>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_page_pattern_attributes_retry_text"><%= l(:field_rmpt_tests_page_pattern_retry_text) %></label>
+        </td>
+        <td class="rmp-wide-input">
+          <%= ff.text_area :retry_text, rows: 5, class: 'wiki-edit' %>
+          <%= wikitoolbar_for 'rmpt_test_page_pattern_attributes_retry_text' %>
+          <div class="H">
+            <%= link_to "<span>#{l(:label_preview)}</span>".html_safe, patterns_preview_rmpt_test_path(@test), class: 'in_link rm-icon no_line fa-eye rmpt-patterns-preview' %>
+          </div>
+
+          <fieldset class="acl-macros-list closed" data-field="#rmpt_test_page_pattern_attributes_retry_text">
+            <%= cached_macros %>
+          </fieldset>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_page_pattern_attributes_success_text"><%= l(:field_rmpt_tests_page_pattern_success_text) %></label>
+        </td>
+        <td class="rmp-wide-input">
+          <%= ff.text_area :success_text, rows: 5, class: 'wiki-edit' %>
+          <%= wikitoolbar_for 'rmpt_test_page_pattern_attributes_success_text' %>
+          <div class="H">
+            <%= link_to "<span>#{l(:label_preview)}</span>".html_safe, patterns_preview_rmpt_test_path(@test), class: 'in_link rm-icon no_line fa-eye rmpt-patterns-preview' %>
+          </div>
+
+          <fieldset class="acl-macros-list closed" data-field="#rmpt_test_page_pattern_attributes_success_text">
+            <%= cached_macros %>
+          </fieldset>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_page_pattern_attributes_fail_text"><%= l(:field_rmpt_tests_page_pattern_fail_text) %></label>
+        </td>
+        <td class="rmp-wide-input">
+          <%= ff.text_area :fail_text, rows: 5, class: 'wiki-edit' %>
+          <%= wikitoolbar_for 'rmpt_test_page_pattern_attributes_fail_text' %>
+          <div class="H">
+            <%= link_to "<span>#{l(:label_preview)}</span>".html_safe, patterns_preview_rmpt_test_path(@test), class: 'in_link rm-icon no_line fa-eye rmpt-patterns-preview' %>
+          </div>
+
+          <fieldset class="acl-macros-list closed" data-field="#rmpt_test_page_pattern_attributes_fail_text">
+            <%= cached_macros %>
+          </fieldset>
+        </td>
+      </tr>
+
+      <tr>
+        <td></td>
+        <td>
+          <%= button_tag "<span>#{l(:button_save)}</span>".html_safe, type: 'submit', class: 'acl-btn-flat acl-btn-flat-green rm-icon fa-save' %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+<% end %>

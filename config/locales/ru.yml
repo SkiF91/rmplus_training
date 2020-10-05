@@ -1,0 +1,226 @@
+ru:
+  project_module_rmplus_training: 'RMPlus Training'
+  permission_rmpt_manage_tests: 'Управление тестами'
+  permission_rmpt_view_all_tests: 'Доступ ко всем тестам'
+  permission_rmpt_manage_categories: 'Управление категориями'
+
+  label_rmpt_top_menu_my_tests: 'Тестирование'
+  label_cm_menu_top_menu_rmpt_my_tests: 'Тестирование'
+
+  label_rmpt_user_header: 'Тестирование'
+  label_rmpt_admin_header: 'Администрирование'
+  label_rmpt_reports_header: 'Отчеты'
+  label_rmpt_tests_header: 'Тесты'
+  label_rmpt_tests_settings_header: 'Параметры'
+  label_rmpt_questions_header: 'Вопросы'
+  label_rmpt_patterns_header: 'Шаблоны'
+  label_rmpt_participants_header: 'Участники'
+  label_rmpt_user_tests_header: 'Тесты'
+  label_rmpt_categories_header: 'Категории'
+  label_rmpt_add_test: 'Добавить тест'
+  label_rmpt_test_name_header: 'Название'
+  label_rmpt_test_author_header: 'Автор'
+  label_rmpt_categories_tree_header: 'Категории'
+  label_rmpt_extra_attempts_header: 'Дополнительные попытки'
+  label_rmpt_all_categories: 'Все'
+  label_rmpt_category_empty: 'Пустая категория'
+  text_rmpt_category_tree_empty: 'Дерево категорий не было создано'
+  label_rmpt_create_categories_tree: 'Добавить категории'
+  label_rmpt_test_new: 'Новый'
+  label_rmpt_category_add: 'Добавить категорию'
+  label_rmpt_category_add_subcategory: 'Добавить подкатегорию'
+
+  field_rmpt_category_name: 'Название'
+
+  field_rmpt_test_name: 'Название'
+  field_rmpt_test_author: 'Автор'
+  field_rmpt_test_category: 'Категория'
+  field_rmpt_test_q_count: 'Количество вопросов в тесте'
+  field_rmpt_test_min_pass: 'Порог прохождения'
+  field_rmpt_test_min_pass_percent: 'Порог прохождения в %'
+  field_rmpt_test_timelimit_total: 'Ограничение времени на весь тест'
+  field_rmpt_test_timelimit_q: 'Ограничение времени на вопрос'
+  field_rmpt_test_attempts: 'Количество попыток'
+  field_rmpt_test_due_date: 'Актуален до'
+  field_rmpt_test_due_days: 'Актуален в течении указанного срока после распространения'
+  field_rmpt_test_retrying_delay: 'Задержка перед повторной попыткой'
+  field_rmpt_test_show_q_result: 'Отображать результат ответа на каждый вопрос'
+  field_rmpt_test_randomize: 'Вопросы в случайном порядке'
+  field_rmpt_test_can_skip: 'Разрешить пропускать вопросы'
+  field_rmpt_test_randomize_answers: 'Ответы в случайном порядке'
+  field_rmpt_test_can_resubmit: 'Разрешить изменять ответ'
+  field_rmpt_test_rights_users: 'Редакторы'
+
+  field_rmpt_question_text: 'Текст'
+  field_rmpt_question_qtype: 'Тип'
+  field_rmpt_question_randomize: 'Ответы в случайном порядке'
+  field_rmpt_question_test: 'Тест'
+
+  field_rmpt_answer_text: 'Ответ'
+  field_rmpt_answer_question: 'Вопрос'
+
+  field_rmpt_tests_page_pattern_start_text: 'Шаблон текста начальной страницы'
+  field_rmpt_tests_page_pattern_retry_text: 'Шаблон текста повторной попытки'
+  field_rmpt_tests_page_pattern_success_text: 'Шаблон текста при успешном прохождении'
+  field_rmpt_tests_page_pattern_fail_text: 'Шаблон текста при неудачном прохождении'
+
+  field_rmpt_user_test_start_at: 'Дата начала'
+  field_rmpt_user_test_end_at: 'Дата окончания'
+  field_rmpt_user_test_result_ratio: 'Результат (%)'
+
+  field_rmpt_extra_attempt_user: 'Сотрудник'
+  field_rmpt_extra_attempt_test: 'Тест'
+
+  label_rmpt_test_all_available: 'все'
+  label_rmpt_test_min_pass: 'Порог прохождения'
+  label_rmpt_test_min_pass_q: 'ответить на указанное количество вопросов'
+  label_rmpt_test_min_pass_percent: 'ответить на указанный процент вопросов от общего количества вопросов'
+  label_rmpt_test_min_pass_all: 'ответить на все вопросы'
+  text_rmpt_test_pass_all: 'все номера'
+  text_rmpt_can_resubmit_q: "\r\n*Возможность изменять ответ:* да"
+
+  label_rmpt_test_timelimit: 'Ограничение времени'
+  label_rmpt_test_timelimit_unlimit: 'без ограничений'
+  label_rmpt_test_timelimit_total: 'на весь тест'
+  label_rmpt_test_timelimit_q: 'на вопрос'
+
+  label_rmpt_test_attempts_unlimit: 'без ограничений'
+
+  label_rmpt_test_due: 'Срок актуальности'
+  label_rmpt_test_due_unlimit: 'без ограничений'
+  label_rmpt_test_due_date: 'актуален до'
+  label_rmpt_test_due_days: 'актуален в течении указанного срока после распространения'
+  label_rmpt_test_retrying_delay_no: 'без задержки'
+  label_rmpt_days_unit: 'дней'
+  label_rmpt_days_unit_short: 'д.'
+
+  label_rmpt_question_qtype_0: 'Один правильный вариант'
+  label_rmpt_question_qtype_1: 'Несколько правильных вариантов'
+  label_rmpt_question_qtype_0_header: 'Один вариант ответа'
+  label_rmpt_question_qtype_1_header: 'Несколько вариантов ответа'
+
+  label_rmpt_question_add: 'Добавить вопрос'
+  label_rmpt_question_answer_option_type: 'Введите вариант ответа'
+  label_rmpt_answers_plural: 'Ответы'
+  label_rmpt_answer_add: 'Добавить'
+  label_rmpt_no_questions: 'Нет добавленных вопросов'
+
+  error_rmpt_q_answers_blank: 'Вопрос должен содержать несколько ответов'
+  error_rmpt_q_access_denied: 'У вас недостаточно прав на редактирование данного теста'
+  error_rmpt_test_access_denied: 'У вас недостаточно прав на редактирование данного теста'
+  error_rmpt_user_test_started: 'Вы уже запустили прохождение этого теста, завершите предыдущую попытку.'
+  error_rmpt_user_test_attempts_expired: 'Вы израсходовали все попытки прохождения теста'
+  error_rmpt_user_test_retry_waiting: 'Повторное прохождение теста будет доступно через: %{time}'
+  error_rmpt_user_test_access_denied: 'У вас недостаточно прав для прохождения данного теста'
+  error_rmpt_user_test_timelimit_expired: 'У вас закончилось время прохождения теста'
+  error_rmpt_user_test_must_be_started: 'Вы не можете отвечать на вопросы в данном тесте'
+  error_rmpt_user_question_expired: 'У вас закончилось время ответа на вопрос'
+  error_rmpt_user_question_resubmit_prohibited: 'В данном тесте изменять ответ запрещено'
+  error_rmpt_user_question_skip_prohibited: 'В данном тесте пропускать вопросы запрещено'
+  error_rmpt_user_test_step_unknown_question: 'В тесте нет вопроса под номером %{num}'
+
+  text_rmpt_tests_page_pattern_start_default: "В этом тесте {%user_test.q_count_total%}. Чтобы пройти его успешно, вам нужно правильно ответить на {%user_test.min_pass%}.\r\n*Количество попыток:* {%user_test.attempts%}\r\n*Лимит времени:* {%user_test.timelimit%}\r\n*Срок актуальности:* {%user_test.due%}"
+  text_rmpt_tests_page_pattern_retry_default: "В этом тесте {%user_test.q_count_total%}. Чтобы пройти его успешно, вам нужно правильно ответить на {%user_test.min_pass%}.\r\n*Количество попыток:* {%user_test.attempts%}\r\n*Использовано попыток: {%user_test.attempts_used%}*\r\n*Лимит времени:* {%user_test.timelimit%}\r\n*Срок актуальности:* {%user_test.due%}"
+  text_rmpt_tests_page_pattern_success_default: "Поздравляем! Вы успешно прошли тест. В нем было {%user_test.q_count_total%}. Для успешного прохождения вам было нужно правильно ответить на {%user_test.min_pass%}.\r\nВаш результат {%user_test.q_result_ratio%} ({%user_test.q_count_correct%} из {%user_test.q_res_count_total%})."
+  text_rmpt_tests_page_pattern_fail_default: "К сожалению, вы не прошли тест. В нем было {%user_test.q_count_total%}. Для успешного прохождения вам было нужно правильно ответить на {%user_test.min_pass%}.\r\nВаш результат {%user_test.q_result_ratio%} ({%user_test.q_count_correct%} из {%user_test.q_res_count_total%})."
+
+  label_rmpt_preview_header: 'Предпросмотр'
+
+  label_rmpt_macros_q_count_total: 'Количество вопросов в тесте'
+  label_rmpt_macros_q_res_count_total: 'Количество вопросов в тесте(только число)'
+  label_rmpt_macros_min_pass: 'Порог прохождения'
+  label_rmpt_macros_timelimit: 'Ограничение времени'
+  label_rmpt_macros_attempts_left: 'Оставшееся количестов попыток'
+  label_rmpt_macros_attempts_used: 'Использовано попыток'
+  label_rmpt_macros_due: 'Срок актуальности'
+  label_rmpt_macros_q_count_correct: 'Количество правильных ответов'
+  label_rmpt_macros_q_result_ratio: 'Результат в %'
+
+  label_rmpt_participants_add: 'Добавить участников'
+  label_rmpt_macros_list: 'Список макросов'
+
+  label_rmpt_test_status: 'Статус'
+  label_rmpt_test_status_0: 'Пройден'
+  label_rmpt_test_status_1: 'Не пройден'
+  label_rmpt_test_status_2: 'Вышло время'
+  label_rmpt_test_status_3: 'Начат'
+  label_rmpt_test_status_4: 'Не начат'
+
+  text_rmpt_category_move_hint: 'Перетащите для изменения вложенности'
+  text_rmpt_category_delete_confirm: 'Вы уверены, что хотите удалить категорию со всеми подкатегориями?'
+  text_rmpt_moving_category_confirm: 'Вы действительно хотите переместить категорию'
+  text_rmpt_moving_category_to_confirm: 'в'
+  label_rmpt_category_root: 'Корень'
+
+
+  label_rmpt_user_tests_my: 'Мои тесты'
+  label_rmpt_user_tests_on_me: 'Тесты на мне'
+  label_rmpt_user_tests_actual: 'Актуальные'
+  label_rmpt_user_tests_expired: 'Просроченые'
+  label_rmpt_user_tests_failed: 'Проваленные'
+  label_rmpt_user_tests_completed: 'Завершенные'
+
+  label_rmpt_user_test_action_begin: 'Пройти тест'
+  label_rmpt_user_test_action_repeat: 'Пройти тест снова'
+  label_rmpt_user_test_action_continue: 'Продолжить тест'
+  label_rmpt_user_test_action_processing: 'Начать тестирование'
+  label_rmpt_retry_available_in: 'Повторная попытка будет доступна через:'
+
+  label_rmpt_test: 'Тест'
+  label_rmpt_question: 'Вопрос'
+  label_rmpt_user_test_processing: 'Прохождение теста'
+  label_rmpt_attempts: 'Попытки'
+  label_rmpt_timelimit_q_left: 'Оставшееся время на вопрос'
+  label_rmpt_timelimit_total_left: 'Оставшееся время на тест'
+  label_rmpt_submit_answer: 'Ответить'
+  label_rmpt_complete_test: 'Завершить тест'
+  label_rmpt_skip_question: 'Пропустить вопрос'
+  label_rmpt_extra_attempt_add: 'Добавить попытку'
+  label_rmpt_extra_attempt_new: 'Добавление попытки'
+  label_rmpt_user_test_time_used: 'Затраченное время'
+  label_rmpt_time_expired: 'просрочено'
+
+  label_rmpt_report: 'По тестам'
+
+  label_rmpt_all_users: 'Все сотрудники'
+  label_rmpt_all_tests: 'Все тесты'
+  label_rmpt_all_departments: 'Все департаменты'
+  label_rmpt_all_statuses: 'Все статусы'
+  label_rmpt_report_by_users_header: 'Отчет по сотрудникам'
+  label_rmpt_report_by_tests_header: 'Отчет по тестам'
+  label_rmpt_department_empty: 'Пустой отдел'
+  label_rmpt_export_to_excel: 'Экспортировать в Excel'
+  label_rmpt_user: 'Сотрудник'
+  label_rmpt_report_group_by_user: 'Группировать по сотрудникам'
+  label_rmpt_report_group_by_test: 'Группировать по тестам'
+  error_rmpt_import_sheet_undefined: 'Файл не передан'
+  error_rmpt_import_sheet_too_big: 'Размер файла не должен превышать %{size} Мб'
+  error_rmpt_import_sheet_blank: 'Пустой файл'
+  error_rmpt_import_sheet_wrong_file: 'Недопустимый формат файла. Доступный форматы: xlsx, csv'
+  error_rmpt_import_sheet_process: 'Файл не был обработан, формат файла не соответствует расширению. Доступные форматы: xlsx, csv'
+  label_rmpt_questions_import: 'Импортировать'
+  label_rmpt_questions_import_header: 'Импорт вопросов из таблицы'
+  label_rmpt_import_button: 'Отправить'
+  label_rmpt_import_success:
+    one: "Импорт вопросов прошел успешно. Добавлен %{count} вопрос"
+    few: "Импорт вопросов прошел успешно. Добавлено %{count} вопроса"
+    many: "Импорт вопросов прошел успешно. Добавлено %{count} вопросов"
+    other: "Импорт вопросов прошел успешно. Добавлено %{count} вопросов"
+  label_rmpt_import_success_no: 'Ни одного вопроса не было добавлено.'
+  field_rmpt_statistic: "Статистика"
+  field_rmpt_average_time: "Среднее время"
+  text_rmpt_clear_stat: "Очистить статистику"
+  text_rmpt_are_you_sure_stat: "Вы действительно хотите очистить статистику?"
+  field_rmpt_test_show_t_result: "Отображать результаты прохождения теста"
+  text_rmpt_show_t_results: "Посмотреть ответы на тест"
+  text_rmpt_show_q_result: "%{percent}% (%{success} из %{total})"
+  text_rmpt_your_answers_header: 'Ваши ответы:'
+  rmpt_text_chose_correct_answer: 'Отметьте для указания правильного ответа'
+  rmpt_error_not_have_correct_answer: 'Вопрос должен иметь хотя бы один правильный ответ'
+  rmpt_label_question_with_count:
+    zero: " вопросов"
+    one: " вопрос"
+    few: " вопроса"
+    many: " вопросов"
+    other: " вопросов"
+  rmpt_label_import_qtype_single: 'один ответ'

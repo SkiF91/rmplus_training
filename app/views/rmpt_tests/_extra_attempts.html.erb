@@ -1,0 +1,28 @@
+<%
+  attempts = @test.extra_attempts.preload(:user).sorted
+%>
+<div class="H">
+  <div class="acl-btn-flat-delimiter R">
+    <%= link_to "<span>#{l(:label_rmpt_extra_attempt_add)}</span>".html_safe, '#', class: 'in_link no_line rm-icon fa-plus acl-btn-flat rmpt-exa-add' %>
+  </div>
+</div>
+
+<% if attempts.present? %>
+  <table class="list">
+    <% @test.extra_attempts.preload(:user).sorted.each do |a| %>
+      <tr>
+        <td>
+          <%= link_to_user a.user %>
+        </td>
+        <td>
+          <%= a.attempts %>
+        </td>
+        <td>
+          <%= link_to "<span>#{l(:label_rmpt_extra_attempt_add)}</span>", extra_attempt_rmpt_test_path(a), class: 'rm-icon no_line in_link fa-plus' %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <div class="nodata"><%= l(:label_no_data) %></div>
+<% end %>

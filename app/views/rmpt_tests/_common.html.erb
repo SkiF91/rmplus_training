@@ -1,0 +1,344 @@
+<%= error_messages_for @test %>
+
+<%= form_for @test do |f| %>
+  <%= f.hidden_field :q_count, value: '' %>
+  <%= f.hidden_field :attempts, value: '' %>
+  <%= hidden_field_tag 'rmpt_test[retrying_delay_parted][days]', '' %>
+  <%= hidden_field_tag 'rmpt_test[retrying_delay_parted][time]', '' %>
+
+  <div id="rmpt-settings-container">
+    <table class="plugin_settings">
+      <tr>
+        <td>
+          <label for="rmpt_test_name"><%= l(:field_rmpt_test_name) %> <span class="required">*</span></label>
+        </td>
+        <td>
+          <%= f.text_field :name, style: 'width: 400px' %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_category_id"><%= l(:field_rmpt_test_category) %></label>
+        </td>
+        <td>
+          <%
+            cats = []
+            RmptCategory.each_with_level(RmptCategory.order(:lft)) do |c, level|
+              cats << ["#{'-' * level} #{c.name}", c.id]
+            end
+          %>
+          <%= select_tag 'rmpt_test[category_id]', options_for_select([''] + cats, @test.category_id), class: 'select2' %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_q_count"><%= l(:field_rmpt_test_q_count) %></label>
+        </td>
+        <td class="rmpt-disabler-container">
+          <%= f.number_field :q_count, min: 1, max: 999, style: 'width: 35px' %>
+          <label>
+            <%= check_box_tag :q_count, 1, @test.q_count.blank?, class: 'rmpt-disabler' %>
+            &mdash;
+            <%= l(:label_rmpt_test_all_available) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_attempts"><%= l(:field_rmpt_test_attempts) %></label>
+        </td>
+        <td class="rmpt-disabler-container">
+          <%= f.number_field :attempts, min: 1, max: 100, style: 'width: 35px' %>
+          <label>
+            <%= check_box_tag :attempts, 1, @test.attempts.blank?, class: 'rmpt-disabler' %>
+            &mdash;
+            <%= l(:label_rmpt_test_attempts_unlimit) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_retrying_delay"><%= l(:field_rmpt_test_retrying_delay) %></label>
+        </td>
+        <td class="rmpt-disabler-container">
+          <span>
+            <%= number_field_tag 'rmpt_test[retrying_delay_parted][days]', @test.retrying_delay_parted[:days], min: 0, max: 100, style: 'width: 35px' %>
+            <span class="acl-unit"><%= l(:label_rmpt_days_unit_short) %></span>
+          </span>
+          <%= time_field_tag 'rmpt_test[retrying_delay_parted][time]', @test.retrying_delay_parted[:time], size: 4, step: 1 %>
+
+          <label>
+            <%= check_box_tag :retrying_delay_parted, 1, @test.retrying_delay.blank?, class: 'rmpt-disabler' %>
+            &mdash;
+            <%= l(:label_rmpt_test_retrying_delay_no) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="min_pass"><%= l(:label_rmpt_test_min_pass) %></label>
+        </td>
+        <td class="rmpt-switcher-container">
+          <%
+            if @test.min_pass_percent.present?
+              min_pass = 2
+            elsif @test.min_pass.present?
+              min_pass = 1
+            else
+              min_pass = 0
+            end
+          %>
+          <table>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :min_pass, 0, min_pass == 0, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_min_pass_all) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <%= hidden_field_tag 'rmpt_test[min_pass]', '', id: nil %>
+                <%= hidden_field_tag 'rmpt_test[min_pass_percent]', '', id: nil %>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :min_pass, 1, min_pass == 1, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_min_pass_q) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <span class="rmpt-min-pass rmpt-min-pass-1 I">
+                  <%= f.number_field :min_pass, min: 1, max: 100 %>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :min_pass, 2, min_pass == 2, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_min_pass_percent) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <span class="rmpt-min-pass rmpt-min-pass-2 I">
+                  <%= f.number_field :min_pass_percent, min: 1, max: 100 %>
+                  <span class="acl-unit">%</span>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="timelimit"><%= l(:label_rmpt_test_timelimit) %></label>
+        </td>
+        <td class="rmpt-switcher-container">
+          <%
+            if @test.timelimit_q.present?
+              timelimit = 2
+            elsif @test.timelimit_total.present?
+              timelimit = 1
+            else
+              timelimit = 0
+            end
+          %>
+
+          <table>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :timelimit, 0, timelimit == 0, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_timelimit_unlimit) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <%= hidden_field_tag 'rmpt_test[timelimit_total]', '', id: nil %>
+                <%= hidden_field_tag 'rmpt_test[timelimit_q]', '', id: nil %>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :timelimit, 1, timelimit == 1, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_timelimit_total) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <span class="rmpt-timelimit rmpt-timelimit-1 I">
+                  <%= time_field_tag 'rmpt_test[timelimit_total]', Rmpt::Utils.convert_seconds_to_time_string(@test.timelimit_total), size: 4, step: 1 %>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :timelimit, 2, timelimit == 2, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_timelimit_q) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <span class="rmpt-timelimit rmpt-timelimit-2 I">
+                  <%= time_field_tag 'rmpt_test[timelimit_q]', Rmpt::Utils.convert_seconds_to_time_string(@test.timelimit_q), size: 4, step: 1 %>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="due"><%= l(:label_rmpt_test_due) %></label>
+        </td>
+        <td class="rmpt-switcher-container">
+          <%
+            if @test.due_days.present?
+              due = 2
+            elsif @test.due_date.present?
+              due = 1
+            else
+              due = 0
+            end
+          %>
+
+          <table>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :due, 0, due == 0, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_due_unlimit) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <%= hidden_field_tag 'rmpt_test[due_date]', '', id: nil %>
+                <%= hidden_field_tag 'rmpt_test[due_days]', '', id: nil %>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="padding: 6px 0;">
+                  <label>
+                    <%= radio_button_tag :due, 1, due == 1, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_due_date) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <span class="rmpt-due rmpt-due-1 I">
+                  <%= f.date_field :due_date, size: 4, step: 1 %>
+                  <%= calendar_for 'rmpt_test_due_date' %>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="padding: 5px 0;">
+                  <label>
+                    <%= radio_button_tag :due, 2, due == 2, class: 'rmpt-switcher' %> <%= l(:label_rmpt_test_due_days) %>
+                  </label>
+                </div>
+              </td>
+              <td>
+                <span class="rmpt-due rmpt-due-2 I">
+                  <%= f.number_field :due_days, min: 1, max: 100 %>
+                  <span class="acl-unit"><%= l(:label_rmpt_days_unit) %></span>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <label>
+            <%= f.check_box :randomize %>
+            &mdash;
+            <%= l(:field_rmpt_test_randomize) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <label>
+            <%= f.check_box :can_skip %>
+            &mdash;
+            <%= l(:field_rmpt_test_can_skip) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <label>
+            <%= f.check_box :can_resubmit %>
+            &mdash;
+            <%= l(:field_rmpt_test_can_resubmit) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <label>
+            <%= f.check_box :show_q_result, disabled: @test.can_resubmit? %>
+            &mdash;
+            <%= l(:field_rmpt_test_show_q_result) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <label>
+            <%= f.check_box :show_t_result %>
+            &mdash;
+            <%= l(:field_rmpt_test_show_t_result) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rmpt_test_rights_user_ids_"><%= l(:field_rmpt_test_rights_users) %></label>
+        </td>
+        <td>
+          <%
+            rights_users = User.active
+            if @test.rights_user_ids.present?
+              rights_users = rights_users.order(Arel.sql("case when id IN (#{@test.rights_user_ids.join(', ')}) then 0 else 1 end"))
+            end
+          %>
+          <%= select_tag 'rmpt_test[rights_user_ids][]', options_for_select(rights_users.sorted.limit(@test.rights_user_ids.size + 10).map { |u| [u.name, u.id] }, @test.rights_user_ids), multiple: true, class: 'rmpt-select2-ajaxable', data: { ajax_url: url_for(controller: :rmpt_tests, action: :ajax_users_list) } %>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <%= button_tag "<span>#{l(:button_save)}</span>".html_safe, type: 'submit', class: 'acl-btn-flat acl-btn-flat-green rm-icon fa-save' %>
+        </td>
+      </tr>
+    </table>
+  </div>
+<% end %>
+
+<script type="text/javascript" charset="utf-8">
+  $('#rmpt_test_timelimit_q, #rmpt_test_timelimit_total, #rmpt_test_retrying_delay_parted_time').timepickeralone({
+    hours: true,
+    minutes: true,
+    seconds: true,
+    ampm: false,
+    twelveHoursFormat: false,
+    defaultTime: ''
+  });
+
+  RMPlus.TR.make_select2_ajaxable();
+</script>

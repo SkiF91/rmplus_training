@@ -1,0 +1,38 @@
+<% content_for :sidebar do %>
+  <% if User.current.global_permission_to?(:rmpt_manage_tests) || User.current.global_permission_to?(:rmpt_manage_categories) %>
+    <h3 class="rm-icon fa-cogs"><%= l(:label_rmpt_admin_header) %></h3>
+    <ul class="rmpt-sidebar-items">
+      <% if User.current.global_permission_to?(:rmpt_manage_categories) %>
+        <li>
+          <%= link_to "<span>#{l(:label_rmpt_categories_header)}</span>".html_safe, rmpt_categories_path, class: "no_line rm-icon fa-server#{' selected' if controller_name == 'rmpt_categories'}" %>
+        </li>
+      <% end %>
+      <% if User.current.global_permission_to?(:rmpt_manage_tests) %>
+        <li>
+          <%= link_to "<span>#{l(:label_rmpt_tests_header)}</span>".html_safe, rmpt_tests_path, class: "no_line rm-icon fa-list-ul#{' selected' if controller_name == 'rmpt_tests'}" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if User.current.global_permission_to?(:rmpt_manage_tests) %>
+    <h3 class="rm-icon fa-bar-chart"><%= l(:label_rmpt_reports_header) %></h3>
+
+    <ul class="rmpt-sidebar-items">
+      <li>
+        <%= link_to "<span>#{l(:label_rmpt_report)}</span>".html_safe, rmpt_report_path, class: "no_line rm-icon fa-list-ul#{' selected' if controller_name == 'rmpt_reports' && action_name == 'report'}" %>
+      </li>
+    </ul>
+  <% end %>
+
+  <h3 class="rm-icon fa-heart-o"><%= l(:label_rmpt_user_tests_my) %></h3>
+  <ul class="rmpt-sidebar-items">
+    <li>
+      <%= link_to "<span>#{l(:label_rmpt_user_tests_on_me)}</span>".html_safe, my_rmpt_path(q: 'on_me'), class: "no_line rm-icon fa-flag-o#{' selected' if controller_name.to_s == 'rmpt' && action_name == 'index' && @q == 'on_me'}" %>
+      <%= User.current.acl_ajax_counter('rmpt_tests_count' , { period: 600, params: { q: 'actual' } }).html_safe %>
+    </li>
+    <li>
+      <%= link_to "<span>#{l(:label_rmpt_user_tests_completed)}</span>".html_safe, my_rmpt_path(q: 'completed'), class: "no_line rm-icon fa-check#{' selected' if controller_name.to_s == 'rmpt' && action_name == 'index' && @q == 'completed'}" %>
+    </li>
+  </ul>
+<% end %>

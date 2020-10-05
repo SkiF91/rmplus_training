@@ -1,0 +1,52 @@
+<div class="contextual">
+  <%= link_to "<span>#{l(:label_rmpt_category_add)}</span>".html_safe, new_rmpt_category_path, class: 'no_line in_link rm-icon fa-plus acl-btn-flat acl-btn-flat-green rmpt-c-add' %>
+</div>
+
+<h2>
+  <%= l(:label_rmpt_categories_header) %>
+</h2>
+
+<div id="rmpt-c-item-pattern" style="display: none">
+  <div class="rmpt-c-node-inline">
+    <span class="rmpt-c-drag" title="<%= l(:text_rmpt_category_move_hint) %>">≡</span>
+    <%= link_to "<span></span>".html_safe, '#', class: 'no_line in_link rm-icon fa-pencil rmpt-c-action-edit', title: l(:button_edit), data: { id: '', value: '' } %>
+    <div class="rmpt-c-node-btns">
+      <div class="R">
+        <%= link_to "<span>#{l(:label_rmpt_category_add_subcategory)}</span>".html_safe, '#', class: 'rm-icon fa-code-fork no_line in_link rmpt-c-action-add-child' %>
+        <%= link_to "<span>#{l(:button_delete)}</span>".html_safe, '#', remote: true, method: :delete, class: 'rm-icon fa-trash no_line in_link rmpt-c-action-del', data: { confirm: l(:text_are_you_sure) } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="rmpt-categories-list" class="rmpt-categories-tree">
+  <div class="rmpt-c-container<%= ' I' if @categories.blank? %>">
+    <div class="rmpt-c-node rmpt-c-node-root"><span class="rmpt-c-drag">≡</span><%= l(:label_rmpt_category_root) %></div>
+    <%= acl_tree(@categories) do |c| %>
+      <div id="rmpt-c-<%= c.id %>" class="rmpt-c-node">
+        <div class="rmpt-c-node-inline">
+          <span class="rmpt-c-drag" title="<%= l(:text_rmpt_category_move_hint) %>">≡</span>
+          <%= link_to "<span>#{c.name}</span>".html_safe, '#', class: 'no_line in_link rm-icon fa-pencil rmpt-c-action-edit', title: l(:button_edit), data: { id: c.id, value: c.name } %>
+          <div class="rmpt-c-node-btns">
+            <%= link_to "<span>#{l(:label_rmpt_category_add_subcategory)}</span>".html_safe, new_rmpt_category_path(parent_id: c.id), class: 'rm-icon fa-code-fork no_line in_link rmpt-c-action-add-child' %>
+            <%= link_to "<span>#{l(:button_delete)}</span>".html_safe, rmpt_category_path(c), remote: true, method: :delete, class: 'rm-icon fa-trash no_line in_link', data: { confirm: l(:text_are_you_sure) } %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="nodata<%= ' I' if @categories.present? %>"><%= l(:label_no_data) %></div>
+</div>
+
+<% render partial: 'rmpt_tests/sidebar' %>
+<% html_title l(:label_rmpt_categories_header) %>
+
+<script type="text/javascript" charset="utf-8">
+  RMPlus.TR.lbl_moving_category = '<%= escape_javascript(l(:text_rmpt_moving_category_confirm)) %>';
+  RMPlus.TR.lbl_moving_to_category = '<%= escape_javascript(l(:text_rmpt_moving_category_to_confirm)) %>';
+  RMPlus.TR.lbl_root = '<%= escape_javascript(l(:label_rmpt_category_root)) %>';
+  RMPlus.TR.lbl_close = '<%= l(:button_close_window) %>';
+  RMPlus.TR.category_form = '<%= escape_javascript(render(partial: 'rmpt_categories/form')) %>';
+
+  RMPlus.TR.make_categories_movable();
+</script>

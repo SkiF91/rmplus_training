@@ -1,0 +1,27 @@
+<h2>
+  <%= link_to "<span>#{l(:label_rmpt_tests_header)}</span>".html_safe, rmpt_tests_path %>
+  &rarr;
+  <%= @test.new_record? ? l(:label_rmpt_test_new) : @test.name %>
+
+  <% html_title l(:label_rmpt_tests_header) %>
+</h2>
+
+<% heads_for_wiki_formatter %>
+
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'attachments' %>
+<% end %>
+
+<% if @test.new_record? %>
+  <%= render partial: 'rmpt_tests/common' %>
+<% else %>
+  <%= render_tabs [
+    { name: 'common', label: :label_rmpt_tests_settings_header, partial: 'rmpt_tests/common' },
+    { name: 'questions', label: :label_rmpt_questions_header, partial: 'rmpt_tests/questions_list' },
+    { name: 'patterns', label: :label_rmpt_patterns_header, partial: 'rmpt_tests/patterns' },
+    { name: 'participants', label: :label_rmpt_participants_header, partial: 'rmpt_tests/participants' },
+    # { name: 'extra_attempts', label: :label_rmpt_extra_attempts_header, partial: 'rmpt_tests/extra_attempts' }
+  ] %>
+<% end %>
+
+<%= render partial: 'sidebar' %>

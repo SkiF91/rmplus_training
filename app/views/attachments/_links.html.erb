@@ -1,0 +1,5 @@
+<% if @question.present? && Redmine::Plugin.installed?(:luxury_buttons) %>
+  <%= render partial: 'lu_buttons/attachments_links', locals: local_assigns %>
+<% else %>
+  <%= rmp_render_previous('attachments/links', __FILE__, true, local_assigns || {}) %>
+<% end %>

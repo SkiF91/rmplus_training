@@ -1,0 +1,4 @@
+$('.rmpt-q-<%= @question.id %>').effect('highlight', 500, function() {
+  $(this).find('.rmpt-stat').html('<span>&times;</span>');
+  $(this).find('.rmpt-clear-btn').remove();
+})

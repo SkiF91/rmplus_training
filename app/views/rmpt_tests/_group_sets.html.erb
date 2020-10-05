@@ -1,0 +1,8 @@
+<p>
+  <%= text_field_tag 'filter_group_sets', '', id: nil, class: 'ldap-gs-groupsets-filter find-filter autocomplete', placeholder: l(:label_ldap_groupset) %>
+</p>
+
+<div class="ldap-gs-filter-container">
+  <div class="nodata"><%= l(:label_no_data) %></div>
+  <div class="ldap-gs-filter-result"></div>
+</div>

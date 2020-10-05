@@ -1,0 +1,20 @@
+<h2>
+  <%= l(:label_rmpt_test) %> &rarr; <%= @user_test.test.name %>
+  <% html_title l(:label_rmpt_test), @user_test.test.name %>
+</h2>
+
+<% if @user_test.errors.present? %>
+  <%= error_messages_for @user_test %>
+<% else %>
+  <div class="rmpt-ut-text-page">
+    <% if @user_test.can_resubmit? %>
+      <% @text += l(:text_rmpt_can_resubmit_q) %>
+    <% end %>
+    <%= textilizable(@text) %>
+  </div>
+  <div>
+    <%= link_to "<span>#{l(:label_rmpt_user_test_action_processing)}</span>".html_safe, processing_rmpt_path(@test), class: "acl-btn-flat acl-btn-flat-green rm-icon #{@is_retry ? 'fa-repeat' : 'fa-play-circle-o'}" %>
+  </div>
+<% end %>
+
+<%= render partial: 'rmpt_tests/sidebar' %>

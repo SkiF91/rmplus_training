@@ -1,0 +1,96 @@
+<%
+  question ||= @question
+  qid = question.id
+  qid = SecureRandom.uuid if qid.blank?
+%>
+<tr id="rmpt-q-<%= qid %>-<%= question.new_record? ? 'new' : 'edit' %>" class="rmpt-q-form rmpt-q-<%= qid %>">
+  <td></td>
+  <td class="rmp-wide-input">
+    <%= form_for(question, html: { id: nil, class: 'rmpt-q-submit-form' }) do |f| %>
+      <%= hidden_field_tag 'rmpt_question[test_id]', question.test_id %>
+      <% id = "rmpt_question_question_#{qid}" %>
+      <%= text_area_tag 'rmpt_question[text]', question.text, class: 'wiki-edit rmpt-q-form-question', id: id, rows: 5, required: true %>
+      <%= wikitoolbar_for id %>
+
+      <div class="rmpt-attachments-block">
+        <div class="rmpt-block-header" data-header="<%= l(:label_file_plural) %>"></div>
+        <%= link_to_attachments question, author: false, thumbnails: false %>
+        <script type="text/javascript" charset="utf-8">
+          $('.attachments .icon-attachment').addClass('in_link');
+        </script>
+      </div>
+      <div>
+        <%= render partial: 'attachments/form', locals: { container: question, description: false } %>
+      </div>
+    <% end %>
+  </td>
+  <td colspan="4">
+    <table class="rmpt-q-form-edit-answer">
+      <tr>
+        <td colspan="4">
+          <label>
+            <%= check_box_tag 'rmpt_question[randomize]', true, question.randomize?, id: nil %>
+            &mdash;
+            <%= l(:field_rmpt_question_randomize) %>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4">
+          <% id = "rmpt_question_qtype_#{qid}" %>
+          <%= select_tag 'rmpt_question[qtype]', options_for_select([[l(:label_rmpt_question_qtype_0), RmptQuestion::QTYPE_SINGLE], [l(:label_rmpt_question_qtype_1), RmptQuestion::QTYPE_MULTIPLE]], question.qtype || RmptQuestion::QTYPE_SINGLE), id: id, class: 'rmpt-q-form-type' %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <% id = "answer_#{qid}" %>
+          <%= text_field_tag id, '', placeholder: l(:label_rmpt_question_answer_option_type), class: 'rmpt-q-form-answer',  data: {atitle: l(:rmpt_text_chose_correct_answer) } %>
+        </td>
+        <td>
+          <%= link_to '', '#', class: 'rmpt-q-form-add-answer rm-icon rm-nom no_line fa-plus', title: l(:label_rmpt_answer_add) %>
+        </td>
+      </tr>
+      <tbody class="rmpt-q-form-answers-container" data-del="<%= l(:button_delete) %>" data-edit="<%= l(:button_edit) %>">
+        <% question.answers.each do |a| %>
+          <tr>
+            <td><span class="rmpt-q-form-a-drag">≡</span></td>
+            <td>
+              <% if question.type_single? %>
+                <%= radio_button_tag 'rmpt_question[answers_attributes][][correct]', true, a.correct?, class: 'rmpt-q-form-a-correct', title: l(:rmpt_text_chose_correct_answer),id: nil %>
+              <% else %>
+                <%= check_box_tag 'rmpt_question[answers_attributes][][correct]', true, a.correct?, class: 'rmpt-q-form-a-correct', title: l(:rmpt_text_chose_correct_answer), id: nil %>
+              <% end %>
+            </td>
+            <td>
+              <%= text_field_tag 'rmpt_question[answers_attributes][][text]', a.text, class: 'rmpt-q-form-a-answer', title: l(:button_edit), id: nil %>
+            </td>
+            <td class="rmpt-stat">
+              <% if a.count_touch.present? && question.count_touch.present? %>
+                <span title=""><%= rmp_number_text((a.count_touch / question.count_touch.to_f) * 100) %>%</span>
+              <% else %>
+                <span title="">&times;</span>
+              <% end %>
+            </td>
+            <td><a href="#" class="no_line rm-icon rm-nom fa-trash rmpt-q-form-remove-answer" title="<%= l(:button_delete) %>"></a></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </td>
+  <td>
+    <div class="acl-btn-flat-delimiter">
+      <%= button_tag "<span>#{l(:button_save)}</span>".html_safe, class: 'acl-btn-flat acl-btn-flat-green rm-icon fa-save rmpt-q-form-submit', data: { id: qid } %>
+    </div>
+    <div class="acl-btn-flat-delimiter">
+      <%= button_tag "<span>#{l(:label_preview)}</span>".html_safe, type: 'button', class: 'rmpt-q-form-preview acl-btn-flat no_line rm-icon fa-eye', data: { id: qid, url: preview_rmpt_questions_path(question_id: question.id), confirm: l(:text_rmpt_are_you_sure_stat) } %>
+    </div>
+    <div class="acl-btn-flat-delimiter">
+      <%= button_tag "<span>#{l(:button_cancel)}</span>".html_safe, type: 'button', class: 'acl-btn-flat rm-icon fa-remove rmpt-q-form-cancel', data: { id: qid } %>
+    </div>
+    <% if question.can_clear_stat? %>
+      <div class="acl-btn-flat-delimiter">
+        <%= link_to("<span>#{l(:text_rmpt_clear_stat)}</span>".html_safe, clear_statistic_rmpt_question_path(question), method: :post, class: 'acl-btn-flat rm-icon fa-recycle rmpt-clear-btn', title: l(:text_rmpt_clear_stat), remote: true, title: l(:text_rmpt_show_t_results),  data: { confirm: l(:text_rmpt_are_you_sure_stat) }) %>
+      </div>
+    <% end %>
+  </td>
+</tr>

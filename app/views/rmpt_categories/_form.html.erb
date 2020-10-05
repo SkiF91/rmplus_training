@@ -1,0 +1,14 @@
+<%
+  category ||= @category
+%>
+
+<%= form_tag category, remote: true do |f| %>
+  <div class="acl-button-form">
+    <p>
+      <%= text_field_tag 'rmpt_category[name]', category.try(:name), class: 'rmpt-c-field-name', required: true %>
+
+      <%= button_tag '', type: 'submit', class: 'acl-btn-flat acl-btn-flat-green rm-icon rm-nom fa-save rmpt-c-action-save', title: l(:button_save) %>
+      <%= button_tag '', type: 'button', class: 'acl-btn-flat rm-icon rm-nom fa-remove rmpt-c-action-cancel', title: l(:button_cancel) %>
+    </p>
+  </div>
+<% end %>

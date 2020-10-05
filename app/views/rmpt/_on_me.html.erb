@@ -1,0 +1,34 @@
+<div class="acl-expander open">
+  <h3 class="rm-icon fa-flag-o">
+    <a href="#" class="acl-expander-handler acl-after in_link no_line">
+      <span><%= l(:label_rmpt_user_tests_on_me) %></span>
+      <%= User.current.acl_ajax_counter('rmpt_tests_count' , { period: 600, params: { q: 'actual' } }) %>
+    </a>
+  </h3>
+
+  <div class="rmpt-ut-my-actual acl-expander-data">
+    <%= render partial: 'rmpt/tests_list', locals: { test_data: @test_data } %>
+  </div>
+</div>
+
+
+<div id="rmpt-ut-my-overdue" class="acl-expander" data-url="<%= my_rmpt_path(q: 'overdue') %>">
+  <h3 class="rm-icon fa-calendar-times-o">
+    <a href="#" class="acl-expander-handler acl-after no_line in_link">
+      <span><%= l(:label_rmpt_user_tests_expired) %></span>
+      <%= User.current.acl_ajax_counter('rmpt_tests_count' , { period: 600, params: { q: 'overdue' } }) %>
+    </a>
+  </h3>
+  <div class="rmpt-ut-my-expired acl-expander-data"></div>
+</div>
+
+<div id="rmpt-ut-my-failed" class="acl-expander" data-url="<%= my_rmpt_path(q: 'failed') %>">
+  <h3 class="rm-icon fa-thumbs-o-down">
+    <a href="#" class="acl-expander-handler acl-after no_line in_link">
+      <span><%= l(:label_rmpt_user_tests_failed) %></span>
+      <%= User.current.acl_ajax_counter('rmpt_tests_count' , { period: 600, params: { q: 'failed' } }) %>
+    </a>
+  </h3>
+
+  <div class="rmpt-ut-my-failed acl-expander-data"></div>
+</div>
